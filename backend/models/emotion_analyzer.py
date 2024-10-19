@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
-from openai.types import ChatModel
+
+load_dotenv()
 
 client: OpenAI = OpenAI(
     api_key=os.getenv('API_KEY'),
