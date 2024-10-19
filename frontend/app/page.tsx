@@ -1,9 +1,10 @@
-import Image from "next/image";
+import ChatInterface from "@/components/chat-interface";
+
 
 export default function Home() {
   return (
-    <main className='text-white text-center bg-black w-full'>
-      Hello World
+    <main className='w-full'>
+      <ChatInterface />
     </main>
     );
 }
