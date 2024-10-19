@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from models.emotion_analyzer import emotion_analyzer
@@ -26,6 +27,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/images", StaticFiles(directory="generated_images"), name="images")
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -38,14 +41,14 @@ async def memory_analyzer(input: UserMemory):
 @app.post('/image')
 async def image_analyzer(input: UserMemory):
     try:
-        image_path = image_generation(input.memory)
-        if not os.path.exists(image_path):
-            logger.error(f"Image not found at path: {image_path}")
-            raise HTTPException(status_code=404, detail="Image not found.")
-        
-        logger.info(f"Sending image from path: {image_path}")
-        return FileResponse(image_path, media_type="image/png", filename="image.png")
-    
+        image_response = image_generation(input.memory, num_images=5)
+        if not image_response.get("image_urls"):
+            logger.error("No images were generated.")
+            raise HTTPException(status_code=500, detail="No images were generated.")
+
+        logger.info(f"Generated image URLs: {image_response['image_urls']}")
+        return {"image_urls": image_response["image_urls"]}
+
     except HTTPException as http_exc:
         logger.error(f"HTTPException: {http_exc.detail}")
         raise http_exc
