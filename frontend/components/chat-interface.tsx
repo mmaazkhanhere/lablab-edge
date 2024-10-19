@@ -16,7 +16,7 @@ const ChatInterface = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [userMemory, setUserMemory] = useState<string>("");
   // const [aiResponse, setAIResponse] = useState<string>("");
-  const [imageSrc, setImageSrc] = useState<string>("");
+  const [imageSrcs, setImageSrcs] = useState([])
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // const handleSubmit = async() =>{
@@ -34,32 +34,27 @@ const ChatInterface = () => {
   // }
 
   const handleGenerateImage = async () => {
-    setIsLoading(true);
-    setErrorMessage('');
-    setImageSrc('');
+    setIsLoading(true)
+    setErrorMessage('')
+    setImageSrcs([])
 
-    const response = await imageGeneration(userMemory);
+    const response = await imageGeneration(userMemory)
 
-        if(response.status === 200 && response.data) {
-            try {
-                // Ensure data is a Blob
-                if (response.data instanceof Blob) {
-                    const url = URL.createObjectURL(response.data);
-                    setImageSrc(url);
-                } else {
-                    console.error("Received data is not a Blob:", response.data);
-                    setErrorMessage("Invalid image data received.");
-                }
-            } catch (err) {
-                console.error("Error processing image blob:", err);
-                setErrorMessage("Failed to process the image.");
-            }
-        } else {
-            setErrorMessage(response.message || "Failed to generate image.");
+    if (response.status === 200 && response.data) {
+        try {
+            // response.data is a list of image URLs
+            setImageSrcs(response.data)
+        } catch (err) {
+            console.error("Error processing image URLs:", err)
+            setErrorMessage("Failed to process the images.")
         }
+    } else {
+        setErrorMessage(response.message || "Failed to generate images.")
+    }
 
-        setIsLoading(false);
+    setIsLoading(false)
   }
+
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
@@ -110,10 +105,20 @@ const ChatInterface = () => {
               {
                 errorMessage.length > 0 && <p className='text-sm text-red-500'>{errorMessage}</p>
               }
-              <p>{imageSrc}</p>
-              {
-                imageSrc && <Image src={imageSrc} alt="Generated Image" width={500} height={500} />
-              }
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {
+                  imageSrcs.map((src, index) => (
+                    <Image
+                      key={index}
+                      src={`http://localhost:8000${src}`}  // Adjust the base URL as needed
+                      alt={`Generated Image ${index + 1}`}
+                      width={500}
+                      height={500}
+                      className="object-cover rounded"
+                    />
+                  ))
+                }
+              </div>
             </div>
             
           )
