@@ -1,7 +1,7 @@
 "use client"
 
 import React, {useState} from 'react'
-// import Image from 'next/image'
+import Image from 'next/image'
 
 import Loader from './loader'
 
@@ -9,53 +9,58 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from '@/components/ui/button'
 
-import { emotionalTherapy } from '@/actions/emotional-therapy'
-// import { imageGeneration } from '@/actions/image-generation'
+// import { emotionalTherapy } from '@/actions/emotional-therapy'
+import { imageGeneration } from '@/actions/image-generation'
 
 const ChatInterface = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [userMemory, setUserMemory] = useState<string>("");
-  const [aiResponse, setAIResponse] = useState<string>("");
-  // const [imageSrcs, setImageSrcs] = useState([])
+  // const [aiResponse, setAIResponse] = useState<string>("");
+  const [imageSrcs, setImageSrcs] = useState([])
   const [errorMessage, setErrorMessage] = useState<string>("");
 
 
-  const handleEmotionalTherapy = async() =>{
-    setIsLoading(true)
-    const response = await emotionalTherapy(userMemory);
-
-    if(response.status === 200){
-      setAIResponse(response.data)
-    }
-    else{
-      setErrorMessage(response?.message)
-    }
-
-    setIsLoading(false)
-  }
-
-  // const handleGenerateImage = async () => {
+  // const handleEmotionalTherapy = async() =>{
   //   setIsLoading(true)
-  //   setErrorMessage('')
-  //   setImageSrcs([])
+  //   const response = await emotionalTherapy(userMemory);
 
-  //   const response = await imageGeneration(userMemory)
-
-  //   if (response.status === 200 && response.data) {
-  //       try {
-  //           // response.data is a list of image URLs
-  //           setImageSrcs(response.data)
-  //       } catch (err) {
-  //           console.error("Error processing image URLs:", err)
-  //           setErrorMessage("Failed to process the images.")
-  //       }
-  //   } else {
-  //       setErrorMessage(response.message || "Failed to generate images.")
+  //   if(response.status === 200){
+  //     setAIResponse(response.data)
+  //   }
+  //   else{
+  //     setErrorMessage(response?.message)
   //   }
 
   //   setIsLoading(false)
   // }
+
+  const handleGenerateImage = async () => {
+    setIsLoading(true);
+    setErrorMessage('');
+    setImageSrcs([]);
+
+    try {
+      const response = await imageGeneration(userMemory);
+
+      if (response.status === 200 && response.data) {
+
+        const updatedImageSrcs = response.data.map((src: string) => {
+
+          const timestamp = new Date().getTime();
+          return `${src}?t=${timestamp}`;
+        });
+        setImageSrcs(updatedImageSrcs);
+      } else {
+        setErrorMessage(response.message || "Failed to generate images.");
+      }
+    } catch (error) {
+      console.error("Error generating images:", error);
+      setErrorMessage("An unexpected error occurred.");
+    }
+
+    setIsLoading(false);
+  }
 
 
   return (
@@ -81,14 +86,15 @@ const ChatInterface = () => {
         <Button
           className="bg-blue-500 text-white p-2 rounded w-full max-w-lg"
           disabled={isLoading}
-          onClick={handleEmotionalTherapy}
+          // onClick={handleEmotionalTherapy}
+          onClick={handleGenerateImage}
         >
           Heal Me
         </Button>
       </div>
       
 
-      {
+      {/* {
         isLoading ? 
           (
             <Loader />
@@ -103,9 +109,9 @@ const ChatInterface = () => {
               }
             </div>
           )
-      }
+      } */}
 
-      {/* {
+      {
         isLoading ?
           (
             <Loader />
@@ -132,7 +138,7 @@ const ChatInterface = () => {
             </div>
             
           )
-      } */}
+      }
 
     </section>
 

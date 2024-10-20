@@ -3,7 +3,6 @@ import requests
 from fastapi import HTTPException
 from dotenv import load_dotenv
 import logging
-import uuid
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -11,12 +10,12 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-def image_generation(memory: str, num_images: int = 5) -> dict:
+def image_generation(prompt: str, num_images: int = 5) -> dict:
     """
     Create visual images based on the provided memory text.
 
     Args:
-        memory (str): The input text describing the memory.
+        prompt (str): The input text describing the memory.
         num_images (int): Number of images to generate.
 
     Returns:
@@ -32,7 +31,7 @@ def image_generation(memory: str, num_images: int = 5) -> dict:
         "Content-Type": "application/json"
     }
 
-    prompt = f"You will be provided a user memory: {memory}. Your task is to create a realistic image that visually represents this memory."
+    prompt = f"Create a visually soothing image that represents the emotional tone of the provided memory {prompt}, using calming elements like nature, light, and colors to evoke healing and peace"
 
     images_dir = "./generated_images"
     os.makedirs(images_dir, exist_ok=True)
@@ -40,7 +39,7 @@ def image_generation(memory: str, num_images: int = 5) -> dict:
     saved_image_paths = []
 
     # Generate images one by one in a loop (API may not support batch creation)
-    for _ in range(num_images):
+    for i in range(num_images):
         payload = {
             "prompt": prompt,
             "model": "flux/dev"
@@ -79,11 +78,11 @@ def image_generation(memory: str, num_images: int = 5) -> dict:
             image_response.raise_for_status()
             image_data = image_response.content
 
-            # Generate unique filename
-            image_filename = f"generated_image_{uuid.uuid4().hex}.png"
+            # Generate fixed filename using loop index to overwrite existing images
+            image_filename = f"generated_image_{i}.png"  # e.g., generated_image_0.png, generated_image_1.png, etc.
             image_path = os.path.join(images_dir, image_filename)
 
-            # Save the image
+            # Save the image, overwriting if it already exists
             with open(image_path, "wb") as file:
                 file.write(image_data)
             logger.info(f"Image saved successfully at {image_path}")
