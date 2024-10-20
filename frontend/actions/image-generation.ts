@@ -1,5 +1,3 @@
-// src/actions/image-generation.js
-
 import axios from 'axios'
 
 export const imageGeneration = async (memory: string) => {

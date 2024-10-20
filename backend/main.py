@@ -10,7 +10,9 @@ from pydantic import BaseModel
 
 from models.emotion_therapy import emotion_therapy
 from models.prompt_for_image_generation import prompt_for_images
+from models.prompt_for_music_generation import prompt_for_music
 from models.image_generation import image_generation
+from models.music_generation import generate_music
 
 
 logging.basicConfig(level=logging.INFO)
@@ -21,6 +23,9 @@ class UserMemory(BaseModel):
     
 class EmotionallyTherapyResponse(BaseModel):
     ai_response: str
+    
+class MusicResponse(BaseModel):
+    audio_url: str  
 
 app: FastAPI = FastAPI()
 app.add_middleware(
@@ -32,6 +37,7 @@ app.add_middleware(
 )
 
 app.mount("/images", StaticFiles(directory="generated_images"), name="images")
+app.mount("/music", StaticFiles(directory="generated_music"), name="music")
 
 @app.get("/")
 async def root():
@@ -61,3 +67,20 @@ async def image_analyzer(input: UserMemory):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post('/music')
+async def music_generator(input: UserMemory):
+    """
+    Endpoint to generate music based on user-provided memory.
+    """
+    logger.info(f"Received request to generate music for memory: {input.memory}")
+    try:
+        prompt = prompt_for_music(input.memory)
+        audio_url = generate_music(prompt)
+        return MusicResponse(audio_url=audio_url)
+    except HTTPException as he:
+        # Re-raise HTTP exceptions to be handled by FastAPI
+        raise he
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
