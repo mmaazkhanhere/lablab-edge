@@ -4,7 +4,7 @@ import PropagateLoader  from "react-spinners/PropagateLoader";
 const Loader = () => {
   return (
     <PropagateLoader
-        className='animate-pulse bg-blue-500 mt-3'
+        className='animate-pulse bg-blue-500 mt-4'
         size={10}
         aria-label="Loading Spinner"
     />

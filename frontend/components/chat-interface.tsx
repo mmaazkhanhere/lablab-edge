@@ -85,55 +85,6 @@ const ChatInterface = () => {
       setIsLoading(false)
     }
   }
-  // const handleGenerateImage = async () => {
-  //   setIsLoading(true);
-  //   setErrorMessage('');
-  //   setImageSrcs([]);
-
-  //   try {
-  //     const response = await imageGeneration(userMemory);
-
-  //     if (response.status === 200 && response.data) {
-
-  //       const updatedImageSrcs = response.data.map((src: string) => {
-
-  //         const timestamp = new Date().getTime();
-  //         return `${src}?t=${timestamp}`;
-  //       });
-  //       setImageSrcs(updatedImageSrcs);
-  //     } else {
-  //       setErrorMessage(response.message || "Failed to generate images.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error generating images:", error);
-  //     setErrorMessage("An unexpected error occurred.");
-  //   }
-
-  //   setIsLoading(false);
-  // }
-
-  // const handleMusicGenerate = async () => {
-  //   setIsLoading(true);
-  //   setErrorMessage('');
-  //   setMusicUrl('');
-  
-  //   try {
-  //     const response = await musicGeneration(userMemory);
-      
-  //     if (response.status === 200 && response.data) {
-  //       setMusicUrl(response.data.audio_url); 
-  //     } else {
-  //       setErrorMessage(response.message || "Failed to generate music.");
-  //     }
-  //   }
-  //   catch (error) {
-  //     console.error("Error generating music:", error);
-  //     setErrorMessage("An unexpected error occurred.");
-  //   }
-  //   finally{
-  //     setIsLoading(false)
-  //   }
-  // }
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
@@ -214,20 +165,6 @@ const ChatInterface = () => {
                 </Carousel>
                 
               }
-              {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {
-                  imageSrcs.map((src, index) => (
-                    <Image
-                      key={index}
-                      src={`http://localhost:8000${src}`}  // Adjust the base URL as needed
-                      alt={`Generated Image ${index + 1}`}
-                      width={500}
-                      height={500}
-                      className="object-cover rounded"
-                    />
-                  ))
-                }
-              </div> */}
               {
                 musicUrl && (
                   <div className="mt-6">

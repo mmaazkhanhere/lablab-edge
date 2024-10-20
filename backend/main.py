@@ -14,10 +14,6 @@ from models.prompt_for_music_generation import prompt_for_music
 from models.image_generation import image_generation
 from models.music_generation import generate_music
 
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 class UserMemory(BaseModel):
     memory: str
     
@@ -49,38 +45,36 @@ async def memory_emotional_therapy(input: UserMemory, response_model=Emotionally
     response: EmotionallyTherapyResponse  = emotion_therapy(input.memory)
     return response
 
+
+# image generation endpoint
 @app.post('/image')
 async def image_analyzer(input: UserMemory):
     try:
         prompt: str = prompt_for_images(input.memory)
         image_response = image_generation(prompt, num_images=3)
         if not image_response.get("image_urls"):
-            logger.error("No images were generated.")
             raise HTTPException(status_code=500, detail="No images were generated.")
 
-        logger.info(f"Generated image URLs: {image_response['image_urls']}")
         return {"image_urls": image_response["image_urls"]}
 
     except HTTPException as http_exc:
-        logger.error(f"HTTPException: {http_exc.detail}")
         raise http_exc
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     
+
+# music generation endpoint
 @app.post('/music')
 async def music_generator(input: UserMemory):
     """
     Endpoint to generate music based on user-provided memory.
     """
-    logger.info(f"Received request to generate music for memory: {input.memory}")
+
     try:
         prompt = prompt_for_music(input.memory)
         audio_url = generate_music(prompt)
         return MusicResponse(audio_url=audio_url)
     except HTTPException as he:
-        # Re-raise HTTP exceptions to be handled by FastAPI
         raise he
     except Exception as e:
-        logger.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
