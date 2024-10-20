@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from models.emotion_analyzer import emotion_analyzer
+from models.emotion_therapy import emotion_therapy
 from models.image_generation import image_generation
 
 
@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)
 
 class UserMemory(BaseModel):
     memory: str
+    
+class EmotionallyTherapyResponse(BaseModel):
+    ai_response: str
 
 app: FastAPI = FastAPI()
 app.add_middleware(
@@ -31,12 +34,14 @@ app.mount("/images", StaticFiles(directory="generated_images"), name="images")
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Revisit: "}
 
-@app.post('/memory')
-async def memory_analyzer(input: UserMemory):
-    response  = emotion_analyzer(input.memory)
+# emotional therapy api endpoint
+@app.post('/emotion-therapy')
+async def memory_emotional_therapy(input: UserMemory, response_model=EmotionallyTherapyResponse):
+    response: EmotionallyTherapyResponse  = emotion_therapy(input.memory)
     return response
+
 
 @app.post('/image')
 async def image_analyzer(input: UserMemory):

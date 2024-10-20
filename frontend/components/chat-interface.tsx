@@ -1,64 +1,70 @@
 "use client"
 
 import React, {useState} from 'react'
+// import Image from 'next/image'
+
+import Loader from './loader'
 
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Button } from './ui/button'
-// import { emotionAnalyzer } from '@/actions/emotion-analyzer'
-import Loader from './loader'
-import { imageGeneration } from '@/actions/image-generation'
-import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 
+import { emotionalTherapy } from '@/actions/emotional-therapy'
+// import { imageGeneration } from '@/actions/image-generation'
 
 const ChatInterface = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [userMemory, setUserMemory] = useState<string>("");
-  // const [aiResponse, setAIResponse] = useState<string>("");
-  const [imageSrcs, setImageSrcs] = useState([])
+  const [aiResponse, setAIResponse] = useState<string>("");
+  // const [imageSrcs, setImageSrcs] = useState([])
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  // const handleSubmit = async() =>{
-  //   setIsLoading(true)
-  //   const response = await emotionAnalyzer(userMemory);
 
-  //   if(response.status === 200){
-  //     setAIResponse(response.data)
-  //   }
-  //   else{
-  //     setErrorMessage(response?.message)
-  //   }
-
-  //   setIsLoading(false)
-  // }
-
-  const handleGenerateImage = async () => {
+  const handleEmotionalTherapy = async() =>{
     setIsLoading(true)
-    setErrorMessage('')
-    setImageSrcs([])
+    const response = await emotionalTherapy(userMemory);
 
-    const response = await imageGeneration(userMemory)
-
-    if (response.status === 200 && response.data) {
-        try {
-            // response.data is a list of image URLs
-            setImageSrcs(response.data)
-        } catch (err) {
-            console.error("Error processing image URLs:", err)
-            setErrorMessage("Failed to process the images.")
-        }
-    } else {
-        setErrorMessage(response.message || "Failed to generate images.")
+    if(response.status === 200){
+      setAIResponse(response.data)
+    }
+    else{
+      setErrorMessage(response?.message)
     }
 
     setIsLoading(false)
   }
 
+  // const handleGenerateImage = async () => {
+  //   setIsLoading(true)
+  //   setErrorMessage('')
+  //   setImageSrcs([])
+
+  //   const response = await imageGeneration(userMemory)
+
+  //   if (response.status === 200 && response.data) {
+  //       try {
+  //           // response.data is a list of image URLs
+  //           setImageSrcs(response.data)
+  //       } catch (err) {
+  //           console.error("Error processing image URLs:", err)
+  //           setErrorMessage("Failed to process the images.")
+  //       }
+  //   } else {
+  //       setErrorMessage(response.message || "Failed to generate images.")
+  //   }
+
+  //   setIsLoading(false)
+  // }
+
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold mb-6">Memory to Video Generator</h1>
+      <div className='flex flex-col items-center gap-y-1 mb-8'>
+        <h1 className="text-3xl font-bold uppercase">Revisit</h1>
+        <p >Because Every Memory Deserves Healing</p>
+      </div>
+      
       
       <div className='flex flex-col w-full max-w-lg gap-y-2'>
         <Label htmlFor="message">Your memory</Label>
@@ -70,15 +76,19 @@ const ChatInterface = () => {
         />
       </div>
       
-      <Button
-        className="bg-blue-500 text-white p-2 rounded w-full max-w-lg"
-        disabled={isLoading}
-        onClick={handleGenerateImage}
-      >
-        Generate Image
-      </Button>
+      <div className='flex items-center max-w-lg w-full gap-x-2'>
+      
+        <Button
+          className="bg-blue-500 text-white p-2 rounded w-full max-w-lg"
+          disabled={isLoading}
+          onClick={handleEmotionalTherapy}
+        >
+          Heal Me
+        </Button>
+      </div>
+      
 
-      {/* {
+      {
         isLoading ? 
           (
             <Loader />
@@ -93,9 +103,9 @@ const ChatInterface = () => {
               }
             </div>
           )
-      } */}
+      }
 
-      {
+      {/* {
         isLoading ?
           (
             <Loader />
@@ -122,14 +132,8 @@ const ChatInterface = () => {
             </div>
             
           )
-      }
+      } */}
 
-      {/* {generatedVideoUrl && (
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Generated Video</h2>
-          <video src={generatedVideoUrl} controls className="w-full max-w-lg" />
-        </div>
-      )} */}
     </section>
 
   )

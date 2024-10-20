@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-export const emotionAnalyzer = async(memory: string) => {
+export const emotionalTherapy = async(memory: string) => {
     try {
-        const response = await axios.post('http://localhost:8000/memory', {memory});
+        const response = await axios.post('http://localhost:8000/emotion-therapy', {memory});
 
         if(response.status === 200) {
             return {status: 200, data: response.data}
@@ -12,6 +12,6 @@ export const emotionAnalyzer = async(memory: string) => {
         }
     } catch (error) {
         console.log(error)
-        return {status:500, message: "Somethin went wrong"}
+        return {status:500, message: "Something went wrong"}
     }
 }
