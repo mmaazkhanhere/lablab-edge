@@ -14,13 +14,13 @@ client: OpenAI = OpenAI(
 def prompt_for_images(memory: str)-> str:
     """
     Recieves a memory from user, which is processed by AI and returns a prompt that can be used
-    by AI models to create image and music that can heal user emotionally
+    by AI models to create image that can heal user emotionally
     
     Arguments:
         memory (str): The memory from the user
         
     Return:
-        prompt (str): A prompt that can be used by AI models to create image and music that can heal 
+        prompt (str): A prompt that can be used by AI models to create image that can heal 
                         user emotionally
 
     """
