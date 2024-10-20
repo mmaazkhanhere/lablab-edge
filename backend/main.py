@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from models.emotion_therapy import emotion_therapy
+from models.prompt_for_image_generation import prompt_for_images
 from models.image_generation import image_generation
 
 
@@ -42,11 +43,11 @@ async def memory_emotional_therapy(input: UserMemory, response_model=Emotionally
     response: EmotionallyTherapyResponse  = emotion_therapy(input.memory)
     return response
 
-
 @app.post('/image')
 async def image_analyzer(input: UserMemory):
     try:
-        image_response = image_generation(input.memory, num_images=5)
+        prompt: str = prompt_for_images(input.memory)
+        image_response = image_generation(prompt, num_images=3)
         if not image_response.get("image_urls"):
             logger.error("No images were generated.")
             raise HTTPException(status_code=500, detail="No images were generated.")
