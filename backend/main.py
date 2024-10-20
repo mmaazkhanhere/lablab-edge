@@ -51,7 +51,7 @@ async def memory_emotional_therapy(input: UserMemory, response_model=Emotionally
 async def image_analyzer(input: UserMemory):
     try:
         prompt: str = prompt_for_images(input.memory)
-        image_response = image_generation(prompt, num_images=3)
+        image_response = image_generation(prompt, num_images=4)
         if not image_response.get("image_urls"):
             raise HTTPException(status_code=500, detail="No images were generated.")
 

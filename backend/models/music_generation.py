@@ -18,7 +18,10 @@ def generate_music(prompt: str) -> str:
 
         REPLICATE_API_TOKEN = os.getenv('REPLICATE_API_TOKEN')
         if not REPLICATE_API_TOKEN:
+            logging.error("API token not found in environment.")
             raise HTTPException(status_code=500, detail="API token not configured.")
+        else:
+            logging.info(f"Using API token: {REPLICATE_API_TOKEN}")
         
         input_data = {
             "prompt": prompt,
@@ -31,7 +34,7 @@ def generate_music(prompt: str) -> str:
         output = replicate.run(
             "facebookresearch/musicgen:7a76a8258b23fae65c5a22debb8841d1d7e816b75c2f24218cd2bd8573787906",
             input=input_data,
-            api_token=os.getenv('REPLICATE_API_KEY') 
+            REPLICATE_API_TOKEN=os.getenv('REPLICATE_API_TOKEN')  
         )
             
         if not output:
