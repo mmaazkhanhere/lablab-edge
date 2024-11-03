@@ -2,8 +2,10 @@ import os
 import logging
 
 from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -22,6 +24,9 @@ class EmotionallyTherapyResponse(BaseModel):
     
 class MusicResponse(BaseModel):
     audio_url: str  
+    
+class MusicResponse(BaseModel):
+    audio_url: str  
 
 app: FastAPI = FastAPI()
 app.add_middleware(
@@ -33,6 +38,7 @@ app.add_middleware(
 )
 
 app.mount("/images", StaticFiles(directory="generated_images"), name="images")
+app.mount("/music", StaticFiles(directory="generated_music"), name="music")
 app.mount("/music", StaticFiles(directory="generated_music"), name="music")
 
 @app.get("/")
