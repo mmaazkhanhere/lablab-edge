@@ -2,10 +2,8 @@ import os
 import logging
 
 from fastapi import FastAPI, Request
-from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -15,7 +13,8 @@ from models.prompt_for_image_generation import prompt_for_images
 from models.prompt_for_music_generation import prompt_for_music
 from models.image_generation import image_generation
 from models.music_generation import generate_music
-# random line
+from models.video_generation import generate_video
+
 class UserMemory(BaseModel):
     memory: str
     
@@ -40,6 +39,7 @@ app.add_middleware(
 app.mount("/images", StaticFiles(directory="generated_images"), name="images")
 app.mount("/music", StaticFiles(directory="generated_music"), name="music")
 app.mount("/music", StaticFiles(directory="generated_music"), name="music")
+# app.mount("/videos", StaticFiles(directory="generated_videos"), name="videos")
 
 @app.get("/")
 async def root():
@@ -83,6 +83,22 @@ async def music_generator(input: UserMemory):
         prompt = prompt_for_music(input.memory)
         audio_url = generate_music(prompt)
         return MusicResponse(audio_url=audio_url)
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    
+
+@app.post('/video')
+async def video_generator(input: UserMemory):
+    """
+    Endpoint to generate video based on user-provided memory.
+    """
+
+    try:
+        # prompt = prompt_for_music(input.memory)
+        video_url = generate_video(input.memory)
+        return video_url
     except HTTPException as he:
         raise he
     except Exception as e:

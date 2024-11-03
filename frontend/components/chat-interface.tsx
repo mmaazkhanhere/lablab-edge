@@ -20,6 +20,7 @@ import {
 import { emotionalTherapy } from "@/actions/emotional-therapy";
 import { imageGeneration } from "@/actions/image-generation";
 import { musicGeneration } from "@/actions/music-generation";
+import { videoGeneration } from "@/actions/video-generation";
 
 const ChatInterface = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,6 +30,7 @@ const ChatInterface = () => {
   const [imageSrcs, setImageSrcs] = useState([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  /*emotional therapy function */
   const handleEmotionalTherapy = async () => {
     setIsLoading(true);
     setErrorMessage("");
@@ -47,7 +49,7 @@ const ChatInterface = () => {
     setIsLoading(false);
   };
 
-  const handleVisualTherapy = async () => {
+  const handleImageTherapy = async () => {
     setIsLoading(true);
     setErrorMessage("");
     setImageSrcs([]);
@@ -81,6 +83,10 @@ const ChatInterface = () => {
     }
   };
 
+  const handleVideoTherapy = async () => {
+    const videoResponse = await videoGeneration(userMemory);
+  };
+
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="flex flex-col items-center gap-y-1 mb-8">
@@ -110,9 +116,17 @@ const ChatInterface = () => {
         <Button
           className="bg-blue-500 text-white p-2 rounded w-full max-w-lg"
           disabled={isLoading}
-          onClick={handleVisualTherapy}
+          onClick={handleImageTherapy}
         >
           Visual Emotional Therapy
+        </Button>
+
+        <Button
+          className="bg-blue-500 text-white p-2 rounded w-full max-w-lg"
+          disabled={isLoading}
+          onClick={handleVideoTherapy}
+        >
+          Visual Video Therapy
         </Button>
       </div>
 
