@@ -7,6 +7,7 @@ from models.prompt_for_music_generation import prompt_for_music
 from models.updated_image_generation import image_generation
 from models.music_generation import generate_music
 from models.emotion_therapy import emotion_therapy
+from models.video_generation import generate_video
 
 import requests
 import os
@@ -82,20 +83,22 @@ async def music_generator(input: UserMemory):
 # Video generation endpoint
 @app.post('/video')
 async def video_generator(input: UserMemory):
-    """
-    Endpoint to generate a video based on user-provided memory using Allegro's API.
-    """
     try:
-        response = requests.post(
-            "https://api.rhymes.ai/v1/chat/completions",
-            json={
-                "api_key": ALLEGRO_API_KEY,
-                "text": input.memory,
-            }
-        )
-        response.raise_for_status()
-        return {"video_url": response.json()["url"]}
+        # Call the generate_video function with the token and prompt
+        video_response = generate_video(ALLEGRO_API_KEY, input.memory)
+        
+        if "error" in video_response:
+            raise HTTPException(status_code=500, detail=video_response["error"])
+        
+        return {"video_url": video_response.get("url")}
     except HTTPException as http_exc:
         raise http_exc
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
+
+
+
