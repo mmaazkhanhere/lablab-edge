@@ -9,6 +9,9 @@ from models.music_generation import generate_music
 from models.emotion_therapy import emotion_therapy
 from models.video_generation import generate_video
 
+from fastapi.responses import FileResponse
+import uuid
+
 import requests
 import os
 
@@ -35,9 +38,12 @@ app.add_middleware(
 current_dir = os.path.dirname(__file__)
 images_dir = os.path.join(current_dir, "generated_images")
 music_dir = os.path.join(current_dir, "generated_music")
+video_dir = os.path.join(current_dir, "generated_videos")
+os.makedirs(video_dir, exist_ok=True)
 
 app.mount("/images", StaticFiles(directory=images_dir), name="images")
 app.mount("/music", StaticFiles(directory=music_dir), name="music")
+app.mount("/videos", StaticFiles(directory=video_dir), name="videos")
 # import logging
 # logging.basicConfig(level=logging.INFO)
 @app.get("/")
@@ -83,14 +89,30 @@ async def music_generator(input: UserMemory):
 # Video generation endpoint
 @app.post('/video')
 async def video_generator(input: UserMemory):
+    """
+    Endpoint to generate a video based on user-provided memory and save it locally.
+    """
     try:
-        # Call the generate_video function with the token and prompt
-        video_response = generate_video(ALLEGRO_API_KEY, input.memory)
+        video_data = generate_video(ALLEGRO_API_KEY)  # Call your video generation function
         
-        if "error" in video_response:
-            raise HTTPException(status_code=500, detail=video_response["error"])
-        
-        return {"video_url": video_response.get("url")}
+        # Simulate downloading the video file (assuming the response contains a URL to the video file)
+        video_url = video_data.get("video_url")
+        if not video_url:
+            raise HTTPException(status_code=500, detail="No video was generated.")
+
+        # Download the video content
+        video_content = requests.get(video_url).content
+
+        # Generate a unique filename for the video
+        video_filename = f"{uuid.uuid4()}.mp4"
+        video_path = os.path.join(video_dir, video_filename)
+
+        # Save the video to the local directory
+        with open(video_path, "wb") as video_file:
+            video_file.write(video_content)
+
+        return {"video_url": f"/videos/{video_filename}"}
+
     except HTTPException as http_exc:
         raise http_exc
     except Exception as e:
