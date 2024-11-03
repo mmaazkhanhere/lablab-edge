@@ -16,7 +16,7 @@ client: ChatOpenAI = ChatOpenAI(
     streaming=True
 )
 
-def emotion_therapy(memory: str) -> str:
+def emotion_therapy(memory: str):
     """
     Recieves a memory from user, which is processed by AI and provide emotional therapy to the user
     
