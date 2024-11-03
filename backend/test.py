@@ -4,9 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from models.updated_prompt_image_generation import prompt_for_images
 from models.prompt_for_music_generation import prompt_for_music
-from models.updated_image_generation import image_generation
 from models.music_generation import generate_music
 from models.emotion_therapy import emotion_therapy
+
+# from models.emotion_therapy_aria import emotion_therapy_aria
 
 import requests
 import os
@@ -46,9 +47,9 @@ async def root():
 
 # Emotional therapy API endpoint
 @app.post('/emotion-therapy')
-async def memory_emotional_therapy(input: UserMemory, response_model=EmotionallyTherapyResponse):
+async def memory_emotional_therapy(input: UserMemory):
     # logging.info("Emotion therapy endpoint called.")
-    response: EmotionallyTherapyResponse = emotion_therapy(input.memory)
+    response = emotion_therapy(input.memory)
     return response
 
 # Image generation endpoint
