@@ -28,6 +28,7 @@ const ChatInterface = () => {
   const [aiResponse, setAIResponse] = useState<string>("");
   const [musicUrl, setMusicUrl] = useState("");
   const [imageSrcs, setImageSrcs] = useState([]);
+  const [videoUrl, setVideoUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   /*emotional therapy function */
@@ -36,16 +37,14 @@ const ChatInterface = () => {
     setErrorMessage("");
     setImageSrcs([]);
     setMusicUrl("");
+    setVideoUrl("");
     setAIResponse("");
-
     const response = await emotionalTherapy(userMemory);
-
     if (response.status === 200) {
       setAIResponse(response.data);
     } else {
-      setErrorMessage(response?.message);
+      setErrorMessage(response?.message || "Failed to generate response");
     }
-
     setIsLoading(false);
   };
 
@@ -55,11 +54,10 @@ const ChatInterface = () => {
     setImageSrcs([]);
     setMusicUrl("");
     setAIResponse("");
-
+    setVideoUrl("");
     try {
       const imageResponse = await imageGeneration(userMemory);
       const musicResponse = await musicGeneration(userMemory);
-
       if (imageResponse.status === 200) {
         const updatedImageSrcs = imageResponse.data.map((src: string) => {
           const timestamp = new Date().getTime();
@@ -69,7 +67,6 @@ const ChatInterface = () => {
       } else {
         setErrorMessage(imageResponse.message || "Failed to generate images.");
       }
-
       if (musicResponse.status === 200 && musicResponse.data) {
         setMusicUrl(musicResponse.data.audio_url);
       } else {
@@ -84,7 +81,26 @@ const ChatInterface = () => {
   };
 
   const handleVideoTherapy = async () => {
-    const videoResponse = await videoGeneration(userMemory);
+    setIsLoading(true);
+    setErrorMessage("");
+    setImageSrcs([]);
+    setMusicUrl("");
+    setAIResponse("");
+    setVideoUrl("");
+
+    try {
+      const videoResponse = await videoGeneration(userMemory);
+      if (videoResponse.status === 200) {
+        setVideoUrl(videoResponse.data.video_url);
+      } else {
+        setErrorMessage(videoResponse.message || "Failed to generate video.");
+      }
+    } catch (error) {
+      console.log("Error generating video:", error);
+      setErrorMessage("An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -164,6 +180,18 @@ const ChatInterface = () => {
             <div className="mt-6">
               <h2 className="text-xl font-semibold mb-4">Generated Music</h2>
               <audio src={musicUrl} controls className="w-full max-w-lg" />
+            </div>
+          )}
+
+          {videoUrl && (
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold mb-4">Generated Video</h2>
+              <video
+                src={videoUrl}
+                controls
+                className="w-full max-w-lg"
+                autoPlay
+              />
             </div>
           )}
         </div>

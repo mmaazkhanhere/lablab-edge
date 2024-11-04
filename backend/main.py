@@ -1,6 +1,6 @@
 import os
 import logging
-from typing import Optional
+import logging 
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,6 +36,9 @@ class VideoIDResponse(BaseModel):
     message: str
     data: str
     status: int 
+
+class VideoResponse(BaseModel):
+    video_url: str
 
 app: FastAPI = FastAPI()
 app.add_middleware(
@@ -106,11 +109,12 @@ async def video_generator(input: UserMemory):
     Returns video details including local path and URL.
     """
     try:
-        # video_request_id = generate_video_request(input.memory)
-        # logger.info(f'Video Request ID: {video_request_id["data"]}')
-        video_url = generate_video('fb54245f-82d3-4ab0-80d0-34b69a6741fb')
-
-        return video_url
+        video_request_id = generate_video_request(input.memory)
+        logger.info(f"Video Request Generated {video_request_id}")
+        video_url = generate_video(video_request_id["data"])
+        # video_url = generate_video("f6eb447d-cae0-4e8e-a80c-58380afff72d")
+        logger.info("Video URL Generated")
+        return VideoResponse(video_url=video_url)
         
     except HTTPException as he:
         # Re-raise HTTP exceptions with their original status code and detail

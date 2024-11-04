@@ -42,7 +42,6 @@ def generate_music(prompt: str) -> str:
             logger.error("Music generation failed.")
             raise HTTPException(status_code=500, detail="Music generation failed.")
 
-        logger.info(f"Generated music output URL: {output}")
 
         # Step 3: Save music file
         music_dir = "./generated_music"

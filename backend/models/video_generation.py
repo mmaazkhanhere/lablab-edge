@@ -44,7 +44,7 @@ def generate_video(request_id):
         # Create directory and save the video
         video_dir = './generated_videos'
         os.makedirs(video_dir, exist_ok=True)
-        video_filename = f"generated_video_{request_id}.mp4"
+        video_filename = f"generated_video_1.mp4"
         video_path = os.path.join(video_dir, video_filename)
 
         # Write the video content to file
@@ -56,7 +56,7 @@ def generate_video(request_id):
         logger.info(f"Video downloaded and saved successfully at {video_path}")
 
         base_url = 'http://localhost:8000'
-        return f"{base_url}/video/{video_filename}"
+        return f"{base_url}/videos/{video_filename}"
 
     except requests.exceptions.RequestException as e:
         logger.error(f"Request failed: {str(e)}")

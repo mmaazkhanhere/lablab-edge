@@ -2,6 +2,7 @@ import os
 import requests
 import logging
 from fastapi import HTTPException
+import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,4 +34,5 @@ def generate_video_request(prompt):
         response.raise_for_status()
         return response.json()  # Return the JSON response
     except requests.exceptions.RequestException as e:
+        logger.error(f"[REQUEST_FAILED]: {str(e)}")
         return f"An error occurred: {str(e)}"
