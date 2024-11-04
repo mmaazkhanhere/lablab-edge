@@ -111,8 +111,12 @@ async def video_generator(input: UserMemory):
     try:
         video_request_id = generate_video_request(input.memory)
         logger.info(f"Video Request Generated {video_request_id}")
-        video_url = generate_video(video_request_id["data"])
-        # video_url = generate_video("f6eb447d-cae0-4e8e-a80c-58380afff72d")
+
+        request_id: str = video_request_id["data"]  
+        logger.info(f"Video Request ID: {request_id}")
+        
+        video_url = generate_video(request_id)
+        # video_url = generate_video("cf3488a4-ed4b-45f0-807b-d9db014fd69d")
         logger.info("Video URL Generated")
         return VideoResponse(video_url=video_url)
         
