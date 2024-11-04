@@ -1,5 +1,6 @@
 import os
 import logging
+from typing import Optional
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,8 +14,12 @@ from models.prompt_for_image_generation import prompt_for_images
 from models.prompt_for_music_generation import prompt_for_music
 from models.image_generation import image_generation
 from models.music_generation import generate_music
+from models.video_generation_request import generate_video_request
 from models.video_generation import generate_video
 
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 class UserMemory(BaseModel):
     memory: str
     
@@ -26,6 +31,11 @@ class MusicResponse(BaseModel):
     
 class MusicResponse(BaseModel):
     audio_url: str  
+
+class VideoIDResponse(BaseModel):
+    message: str
+    data: str
+    status: int 
 
 app: FastAPI = FastAPI()
 app.add_middleware(
@@ -39,7 +49,7 @@ app.add_middleware(
 app.mount("/images", StaticFiles(directory="generated_images"), name="images")
 app.mount("/music", StaticFiles(directory="generated_music"), name="music")
 app.mount("/music", StaticFiles(directory="generated_music"), name="music")
-# app.mount("/videos", StaticFiles(directory="generated_videos"), name="videos")
+app.mount("/videos", StaticFiles(directory="generated_videos"), name="videos")
 
 @app.get("/")
 async def root():
@@ -93,13 +103,21 @@ async def music_generator(input: UserMemory):
 async def video_generator(input: UserMemory):
     """
     Endpoint to generate video based on user-provided memory.
+    Returns video details including local path and URL.
     """
-
     try:
-        # prompt = prompt_for_music(input.memory)
-        video_url = generate_video(input.memory)
+        # video_request_id = generate_video_request(input.memory)
+        # logger.info(f'Video Request ID: {video_request_id["data"]}')
+        video_url = generate_video('fb54245f-82d3-4ab0-80d0-34b69a6741fb')
+
         return video_url
+        
     except HTTPException as he:
+        # Re-raise HTTP exceptions with their original status code and detail
         raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+        # Convert unexpected exceptions to 500 Internal Server Error
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
