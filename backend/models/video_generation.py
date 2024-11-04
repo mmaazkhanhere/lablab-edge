@@ -8,8 +8,8 @@ from fastapi import HTTPException
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-MAX_RETRIES = 3
-RETRY_DELAY = 120  # Seconds
+MAX_RETRIES = 4
+RETRY_DELAY = 130  # Seconds
 
 api_key = os.getenv('ALLEGRO_API_KEY')
 
