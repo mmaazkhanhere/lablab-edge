@@ -6,7 +6,7 @@ authors = ["Mian Maaz Ullah Khan <115078151+mmaazkhanhere@users.noreply.github.c
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 fastapi = "^0.115.2"
 uvicorn = "^0.32.0"
 python-dotenv = "^1.0.1"
